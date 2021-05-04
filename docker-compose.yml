@@ -1,0 +1,70 @@
+version: "2"
+services:
+  nginx:
+    image: nginx:mainline-alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-conf/local:/etc/nginx/conf.d
+    depends_on:
+      - nodejs
+    networks:
+      - app-network
+
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: nodejs
+    restart: unless-stopped
+    environment:
+     - APP=dev
+     - NODE_ENV=
+     - PORT=4000
+     - DB_DIALECT=mongodb
+     - DB_HOST=localhost
+     - DB_PORT=27017
+     - DB_NAME=kumparan
+     - URL_ES=http://elasticsearch:9200
+    links:
+      - mongodb
+      - elasticsearch
+    networks:
+      - app-network
+
+  mongodb:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data/db
+    networks:
+      - app-network
+
+   elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    logging:
+      driver: none
+    ports:
+      - 9300:9300
+      - 9200:9200
+    networks: 
+      - app-network
+
+volumes:
+  data:
+  esdata:
+networks:
+  app-network:
+    driver: bridge

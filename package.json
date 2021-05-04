@@ -1,0 +1,35 @@
+{
+  "name": "kumparan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app-platform.js",
+  "scripts": {
+    "start": "node app-platform.js",
+    "integration-test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha \"tests/**/*_test.js\" \"tests/**/**/**_unitTest.js\" --exit --timeout 50000"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "andri@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.12.0",
+    "@hapi/joi": "^17.1.1",
+    "aws-sdk": "^2.760.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.17.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^3.6.2",
+    "mongodb-memory-server": "^6.9.6",
+    "mongoose": "^5.10.7",
+    "request": "^2.88.2",
+    "util": "^0.12.3"
+  },
+  "devDependencies": {
+    "@elastic/elasticsearch-mock": "^0.3.0"
+  }
+}
