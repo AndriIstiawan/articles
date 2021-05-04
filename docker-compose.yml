@@ -25,7 +25,7 @@ services:
      - NODE_ENV=
      - PORT=4000
      - DB_DIALECT=mongodb
-     - DB_HOST=localhost
+     - DB_HOST=mongodb
      - DB_PORT=27017
      - DB_NAME=kumparan
      - URL_ES=http://elasticsearch:9200
@@ -45,7 +45,7 @@ services:
     networks:
       - app-network
 
-   elasticsearch:
+  elasticsearch:
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
     volumes:
@@ -57,7 +57,6 @@ services:
     logging:
       driver: none
     ports:
-      - 9300:9300
       - 9200:9200
     networks: 
       - app-network
