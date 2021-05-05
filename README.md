@@ -1,5 +1,5 @@
 
-# Kompas News API
+# Article API
 
 ## Prerequisites
 1. Clone this repository:
@@ -8,7 +8,7 @@
 		
 
 ## How to build
-1. Change directory to one of the sample folders, e.g. news:
+1. Change directory to one of the sample folders, e.g. article:
 
 		cd articles/
 
