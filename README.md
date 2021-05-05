@@ -19,6 +19,19 @@
 		docker-compose up -d --build
 
 5. run in browser http://0.0.0.0
+
+## How to test
+1. Change directory to one of the sample folders, e.g. articles:
+
+		cd articles/
+
+2. install package
+
+		npm i
+
+3. Run test:
+
+		npm run integration-test
   
 
 ## API Usage
