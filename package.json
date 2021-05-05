@@ -5,7 +5,7 @@
   "main": "app-platform.js",
   "scripts": {
     "start": "node app-platform.js",
-    "integration-test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha \"tests/**/*_test.js\" \"tests/**/**/**_unitTest.js\" --exit --timeout 50000"
+    "integration-test": "NODE_ENV=integration-test nyc --reporter=lcov --reporter=text mocha \"tests/**/*_test.js\" --exit --timeout 50000"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "mongodb": "^3.6.2",
     "mongodb-memory-server": "^6.9.6",
     "mongoose": "^5.10.7",
+    "nyc": "^15.1.0",
     "request": "^2.88.2",
     "rewire": "^5.0.0",
     "sinon": "^10.0.0",
