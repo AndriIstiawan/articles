@@ -59,15 +59,15 @@ app.get('/', function (req, res) {
 app.use('/api/v1/', apiNewsRoute);
 
 //run seeder
-client.ping({
-    requestTimeout: 3000
-}, function (error) {
-    if (error) {
-        console.trace('elasticsearch cluster is down!');
-    } else {
-        console.log('Elastic search is running.');
-    }
-});
+// client.ping({
+//     requestTimeout: 3000
+// }, function (error) {
+//     if (error) {
+//         console.trace('elasticsearch cluster is down!');
+//     } else {
+//         console.log('Elastic search is running.');
+//     }
+// });
 
 app.listen(process.env.PORT || 4000, function () {
     console.log('Application is running.. ');

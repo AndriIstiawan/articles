@@ -1,6 +1,8 @@
 const { client } = require('../../_helpers/es_conn_builder');
 const { articlesValidation } = require('./articlesValidation'),
-    { createContent } = require('./articlesServices');
+    { createContent, findById, findAll, findByAuthor, createIndex, getByAuhtor, getBySearch, functionHelper, getById } = require('./articlesServices');
+
+const mongoose = require('mongoose')
 
 // CREATE an VR Content
 exports.create = async (req, res) => {
@@ -22,10 +24,10 @@ exports.create = async (req, res) => {
             updatedAt: data.updatedAt
         }
 
-        await client.index({
-            index: 'article',
-            body: result
-        })
+        if (process.env.NODE_ENV === '') {
+            await createIndex(result)
+        }
+
         return res.status(201).json({ success: true });
     }
     catch (err) {
@@ -35,30 +37,23 @@ exports.create = async (req, res) => {
 
 exports.findAll = async (req, res) => {
     try {
-        let result
-        if (req.query.author != '') {
-            result = await client.sql.query({
-                body: {
-                    query: "SELECT * FROM article WHERE title LIKE '%" + req.query.query + "%' AND author='" + req.query.author + "' ORDER BY createdAt DESC "
-                }
-            })
-        } else {
-            result = await client.sql.query({
-                body: {
-                    query: "SELECT * FROM article WHERE title LIKE '%" + req.query.query + "%' ORDER BY createdAt DESC"
-                }
-            })
-        }
-
-        const data = result.body.rows.map(row => {
-            const obj = {}
-            for (let i = 0; i < row.length; i++) {
-                obj[result.body.columns[i].name] = row[i]
+        if (process.env.NODE_ENV === '') {
+            let result
+            if (req.query.author != '') {
+                result = await getByAuhtor(req.query)
+            } else {
+                result = await getBySearch(req.query)
             }
-            return obj
-        })
-
-        return res.status(200).json(data);
+            const data = await functionHelper(result)
+            return res.status(200).json(data);
+        } else {
+            if (req.query.author != '') {
+                data = await findByAuthor(req.query.author, req.query.query, () => { })
+            } else {
+                data = await findAll(req.query.query, () => { })
+            }
+            return res.status(200).json(data)
+        }
     }
     catch (err) {
         return res.status(500).json({ message: err });
@@ -68,21 +63,26 @@ exports.findAll = async (req, res) => {
 // FIND an VR Content
 exports.findOne = async (req, res) => {
     try {
-        result = await client.sql.query({
-            body: {
-                query: "SELECT * FROM article WHERE id='" + req.params.articleId + "'"
-            }
-        })
+        const objectId = mongoose.Types.ObjectId.isValid(req.params.articleId);
+        if (!objectId) {
+            return res.status(400).json({ message: 'Invalid id' })
+        }
 
-        const data = result.body.rows.map(row => {
-            const obj = {}
-            for (let i = 0; i < row.length; i++) {
-                obj[result.body.columns[i].name] = row[i]
+        let data;
+        if (process.env.NODE_ENV === '') {
+            const result = await getById(req.params.articleId)
+            if (result.body.rows.length < 1) {
+                return res.status(404).json({ message: 'article not found' })
             }
-            return obj
-        })
-
-        return res.status(200).json(data[0])
+            data = await functionHelper(result)
+            return res.status(200).json(data[0])
+        } else {
+            data = await findById(req.params.articleId, () => { })
+            if (!data) {
+                return res.status(404).json({ message: 'article not found' })
+            }
+            return res.status(200).json(data)
+        }
     } catch (err) {
         return res.status(500).json(err);
     }
